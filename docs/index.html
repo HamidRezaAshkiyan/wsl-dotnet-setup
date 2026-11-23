@@ -462,6 +462,7 @@
       </a>
       <nav class="nav-links">
         <a href="#included">What's Included</a>
+        <a href="#ai-agents">AI Agents</a>
         <a href="#post-install">Post-Install</a>
         <a class="gh-btn" href="https://github.com/HamidRezaAshkiyan/wsl-dotnet-setup" target="_blank" rel="noopener">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -635,6 +636,54 @@
         </div>
       </section>
 
+      <section id="ai-agents">
+        <h2 class="section-title">Install Your Preferred AI Coding Agent</h2>
+        <p class="section-sub">A standalone companion script (<code>install-ai.sh</code>) that installs only the terminal AI agent(s) you pick — and automatically handles Node.js LTS if needed.</p>
+
+        <div class="installer-card">
+          <div class="terminal-bar">
+            <div class="dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+              <span class="terminal-label">install-ai.sh</span>
+            </div>
+          </div>
+
+          <div class="cmd-box">
+            <span class="cmd-prompt">$</span>
+            <code class="cmd-text" id="ai-cmd">curl -fsSL https://raw.githubusercontent.com/HamidRezaAshkiyan/wsl-dotnet-setup/main/install-ai.sh | bash -s -- claude</code>
+            <button class="copy-btn" id="ai-copy-btn" type="button">Copy</button>
+          </div>
+
+          <div class="builder">
+            <div class="builder-title">Pick AI Agent(s)</div>
+            <div class="options-grid">
+              <label class="chip">
+                <input type="checkbox" class="ai-opt" value="claude" checked />
+                <span>Claude Code</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" class="ai-opt" value="gemini" />
+                <span>Gemini CLI</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" class="ai-opt" value="codex" />
+                <span>Codex CLI</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" class="ai-opt" value="opencode" />
+                <span>OpenCode</span>
+              </label>
+              <label class="chip">
+                <input type="checkbox" class="ai-opt" value="aider" />
+                <span>Aider</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="post-install">
         <h2 class="section-title">Post-Install Quick Steps</h2>
         <p class="section-sub">After the script finishes, run these to complete your setup:</p>
@@ -669,15 +718,20 @@
       <span>
         <a href="https://github.com/HamidRezaAshkiyan/wsl-dotnet-setup" target="_blank" rel="noopener">Source Code</a>
         &middot;
-        <a href="https://raw.githubusercontent.com/HamidRezaAshkiyan/wsl-dotnet-setup/main/install.sh" target="_blank" rel="noopener">Raw install.sh</a>
+        <a href="https://raw.githubusercontent.com/HamidRezaAshkiyan/wsl-dotnet-setup/main/install.sh" target="_blank" rel="noopener">install.sh</a>
+        &middot;
+        <a href="https://raw.githubusercontent.com/HamidRezaAshkiyan/wsl-dotnet-setup/main/install-ai.sh" target="_blank" rel="noopener">install-ai.sh</a>
       </span>
     </footer>
   </div>
 
   <script>
     const BASE_URL = "https://raw.githubusercontent.com/HamidRezaAshkiyan/wsl-dotnet-setup/main/install.sh";
+    const AI_URL = "https://raw.githubusercontent.com/HamidRezaAshkiyan/wsl-dotnet-setup/main/install-ai.sh";
     const cmdEl = document.getElementById("install-cmd");
     const copyBtn = document.getElementById("copy-btn");
+    const aiCmdEl = document.getElementById("ai-cmd");
+    const aiCopyBtn = document.getElementById("ai-copy-btn");
 
     const optDotnet = document.getElementById("opt-dotnet");
     const optStarship = document.getElementById("opt-starship");
@@ -685,6 +739,7 @@
     const optNoTools = document.getElementById("opt-no-tools");
     const optNoLazygit = document.getElementById("opt-no-lazygit");
     const optDryRun = document.getElementById("opt-dry-run");
+    const aiCheckboxes = Array.from(document.querySelectorAll(".ai-opt"));
 
     function updateCommand() {
       const flags = [];
@@ -704,27 +759,42 @@
       }
     }
 
+    function updateAiCommand() {
+      const selected = aiCheckboxes.filter(cb => cb.checked).map(cb => cb.value);
+      if (selected.length === 0) {
+        aiCmdEl.textContent = `curl -fsSL ${AI_URL} | bash -s -- --list`;
+      } else {
+        aiCmdEl.textContent = `curl -fsSL ${AI_URL} | bash -s -- ${selected.join(" ")}`;
+      }
+    }
+
+    function attachCopy(btn, targetEl) {
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(targetEl.textContent);
+          btn.textContent = "Copied!";
+          btn.classList.add("copied");
+          setTimeout(() => {
+            btn.textContent = "Copy";
+            btn.classList.remove("copied");
+          }, 1800);
+        } catch {
+          const range = document.createRange();
+          range.selectNodeContents(targetEl);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+      });
+    }
+
     [optDotnet, optStarship, optMirrors, optNoTools, optNoLazygit, optDryRun].forEach(el => {
       el.addEventListener("change", updateCommand);
     });
+    aiCheckboxes.forEach(cb => cb.addEventListener("change", updateAiCommand));
 
-    copyBtn.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(cmdEl.textContent);
-        copyBtn.textContent = "Copied!";
-        copyBtn.classList.add("copied");
-        setTimeout(() => {
-          copyBtn.textContent = "Copy";
-          copyBtn.classList.remove("copied");
-        }, 1800);
-      } catch {
-        const range = document.createRange();
-        range.selectNodeContents(cmdEl);
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-      }
-    });
+    attachCopy(copyBtn, cmdEl);
+    attachCopy(aiCopyBtn, aiCmdEl);
   </script>
 </body>
 </html>
