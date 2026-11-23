@@ -69,6 +69,29 @@ The script adds a clean, idempotent block (`# >>> wsl-dotnet-setup >>>`) to `~/.
 
 Re-running the script safely updates the managed block without duplicating lines.
 
+## AI Coding Agent Installer (`install-ai.sh`)
+
+Install your preferred terminal AI coding agent(s) independently with the standalone companion script:
+
+```bash
+# Install Claude Code
+curl -fsSL https://raw.githubusercontent.com/HamidRezaAshkiyan/wsl-dotnet-setup/main/install-ai.sh | bash -s -- claude
+
+# Install multiple agents (space- or comma-separated)
+curl -fsSL https://raw.githubusercontent.com/HamidRezaAshkiyan/wsl-dotnet-setup/main/install-ai.sh | bash -s -- gemini codex
+
+# Or run interactively after cloning
+./install-ai.sh
+```
+
+| Agent | Name | Install Method |
+| :--- | :--- | :--- |
+| `claude` | Claude Code (Anthropic) | Official native installer |
+| `gemini` | Gemini CLI (Google) | `@google/gemini-cli` via npm (auto-installs Node.js LTS if needed) |
+| `codex` | Codex CLI (OpenAI) | `@openai/codex` via npm (auto-installs Node.js LTS if needed) |
+| `opencode` | OpenCode | Official native installer |
+| `aider` | Aider | Official standalone installer |
+
 ## Post-Install Steps
 
 ```bash
