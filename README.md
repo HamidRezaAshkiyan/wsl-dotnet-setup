@@ -2,6 +2,8 @@
 
 A single-command, idempotent installer that bootstraps a clean **.NET development environment on WSL** (Ubuntu / Debian) with **Nala**, **Git**, **GitHub CLI**, **.NET SDK**, and essential CLI tools like **fastfetch**, **btop**, **lazygit**, **ripgrep**, **bat**, **fzf**, and **zoxide**.
 
+**Live Page & Interactive Command Builder:** https://hamidrezaashkiyan.github.io/wsl-dotnet-setup/
+
 ## Quick Install
 
 Run this inside your WSL terminal:
